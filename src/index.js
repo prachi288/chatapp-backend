@@ -1,18 +1,12 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { PORT } = require("./config/serverConfig");
-const dbConnect = require("./config/database");
+const express= require('express');
+const {serverConfig,dbConnect}=require('./config');
+const apiRoutes= require('./routes');
 
-const app = express();
+const app=express();
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
-const setupAndStartServer = async()=>{
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
-
-    app.listen(PORT, ()=>{
-        console.log(`Server Running on PORT ${PORT}`);
-        // dbConnect();
-    });
-}
-
-setupAndStartServer();
+app.listen(serverConfig.PORT,()=>{
+    dbConnect();
+    console.log(`Successfully started the server on PORT: ${serverConfig.PORT}`);
+});
