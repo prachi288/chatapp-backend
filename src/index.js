@@ -6,6 +6,8 @@ const app=express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+app.use('/api', apiRoutes);
+
 app.listen(serverConfig.PORT,()=>{
     dbConnect();
     console.log(`Successfully started the server on PORT: ${serverConfig.PORT}`);

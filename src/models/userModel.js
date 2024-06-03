@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+const bcrypt=require('bcryptjs');
+const {ServerConfig}= require('../config')
 
 const userSchema = mongoose.Schema({
     fullname:{
@@ -33,5 +35,10 @@ const userSchema = mongoose.Schema({
 },{timestamps:true});
 
 const User = mongoose.model("User",userSchema)
+
+User.beforeCreate(function encrypt(user){
+    const encryptedPassword=bcrypt.hashSync(user.password,+ServerConfig.SALT_ROUNDS);
+    user.password=encryptedPassword;
+});
 
 export default User;
