@@ -6,11 +6,6 @@ const messageSchema = mongoose.Schema({
         ref:"User",
         required:true
     },
-    reciverId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-    },
     message:{
         type:String,
         required:true
@@ -18,7 +13,11 @@ const messageSchema = mongoose.Schema({
     conversationId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Conversation',
-        default:[]
+    },
+    reciverId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
     },
 },{timestamps:true})
 

@@ -3,53 +3,42 @@ const bcrypt=require('bcryptjs');
 const {ServerConfig}= require('../config')
 
 const userSchema = mongoose.Schema({
-    fullname:{
-        type: String,
+    name:{ 
+        type: "String", 
         required: true
     },
-    username:{
-        type: String,
-        required: true,
-        unique:true
+    email:{ 
+        type: "String", 
+        unique: true, 
+        required: true 
     },
-    email:{
-        type: String,
-        required: true,
-        unique:true
+    password:{ 
+        type: "String", 
+        required: true 
     },
-    gender:{
-        type: String,
+    pic:{
+        type: "String",
         required: true,
-        enum:["male","female"]
+        default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
-    password:{
-        type: String,
+    isAdmin: {
+        type: Boolean,
         required: true,
-        minlength:6,
+        default: false,
     },
-    profilepic:{
-        type: String,
-        default:""
-    }
-},{timestamps:true});
+},{ timestaps: true });
+
+userSchema.methods.matchPassword = async function (enteredPassword){
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 userSchema.pre('save', async function (next) {
-    const user = this;
-
-    // If the password field is not modified, move to the next middleware
-    if (!user.isModified('password')) {
-        return next();
-    }
-
-    try {
-        // Generate a salt and hash the password
-        const salt = await bcrypt.genSalt(+ServerConfig.SALT_ROUNDS);
-        const hash = await bcrypt.hash(user.password, salt);
-        user.password = hash;
+    if(!this.isModified){
         next();
-    } catch (err) {
-        next(err);
     }
+
+    const salt = await bcrypt.genSalt(+ServerConfig.SALT_ROUNDS);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 const User = mongoose.model("User",userSchema)
