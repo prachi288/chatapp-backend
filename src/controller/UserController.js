@@ -8,6 +8,7 @@ const{SuccessResponse,ErrorResponse}=require('../utils/common');
  */
 
 async function userRegister(req,res){
+    console.log("Inide controller");
      try{
         const user=await UserService.userRegister({
             fullname: req.body.fullname,
@@ -22,6 +23,7 @@ async function userRegister(req,res){
                 .status(StatusCodes.CREATED)
                 .json(SuccessResponse);
      }catch(error){
+        console.log("error")
         ErrorResponse.error=error;
         return res
                  .status(error.statusCode)

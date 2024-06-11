@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 const bcrypt=require('bcryptjs');
 const {ServerConfig}= require('../config')
 
@@ -29,16 +29,29 @@ const userSchema = mongoose.Schema({
     },
     profilepic:{
         type: String,
-        required: true,
         default:""
     }
 },{timestamps:true});
 
-const User = mongoose.model("User",userSchema)
+userSchema.pre('save', async function (next) {
+    const user = this;
 
-User.beforeCreate(function encrypt(user){
-    const encryptedPassword=bcrypt.hashSync(user.password,+ServerConfig.SALT_ROUNDS);
-    user.password=encryptedPassword;
+    // If the password field is not modified, move to the next middleware
+    if (!user.isModified('password')) {
+        return next();
+    }
+
+    try {
+        // Generate a salt and hash the password
+        const salt = await bcrypt.genSalt(+ServerConfig.SALT_ROUNDS);
+        const hash = await bcrypt.hash(user.password, salt);
+        user.password = hash;
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 
-export default User;
+const User = mongoose.model("User",userSchema)
+
+module.exports = User;

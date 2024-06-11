@@ -5,11 +5,13 @@ const AppError=require('../utils/error/app-error')
 const userRepository=new UserRepository();
 
 async function Registration(data){
+    console.log("inside service layer")
     try{
         const user=await userRepository.create(data);
         return user;
     } catch(error){
-        throw new AppError('Cannot create a new User',StatusCode.INTERNAL_SERVER_ERROR);
+        console.log(error)
+        throw new AppError('Cannot create a new User',StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
 

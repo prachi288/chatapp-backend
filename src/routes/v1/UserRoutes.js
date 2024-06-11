@@ -4,6 +4,6 @@ const {UserMiddleware}=require('../../middleware');
 const router = express.Router();
 console.log("Inside Routes");
 
-router.post('/create',UserMiddleware.validateCreateRequest, UserController.userRegister);
+router.post('/create',UserController.userRegister);
 
 module.exports = router;
